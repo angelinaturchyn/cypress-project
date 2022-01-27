@@ -41,6 +41,8 @@ describe('Invoke c', function() {
          })
             cy.contains('form','Order Start').find('#orderStartDate').then( input =>{
              cy.wrap(input).click()
+             cy.get('.ant-picker-content').contains('22').click()
+             cy.wrap(input).invoke('prop', 'title').should('contain', "01.22.2022")
             })
 
         })
