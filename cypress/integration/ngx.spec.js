@@ -1,3 +1,85 @@
+it.only('Datepicker', () => {
+    function selectDayFromCurrent(day){
+        let date = new Date()
+        date.setDate(date.getDate() + day)
+        let futureDay = date.getDate()
+        let futureMonth = date.toLocaleString('default',{month: 'short'})
+        let dateAssert = futureMonth + ' '+ futureDay + ', ' + date.getFullYear()
+        cy.get('nb-calendar-navigation').invoke('attr','ng-reflect-date').then( dateAttribute =>{
+            if(!dateAttribute.includes(futureMonth)){
+                cy.get('[data-name="chevron-right"]').click()
+                selectDayFromCurrent(day)
+            }else{
+                cy.get('nb-calendar-day-picker [class="ng-star-inserted"]').contains(futureDay).click()
+            }
+        })
+        return dateAssert
+    }
+
+    cy.visit("http://localhost:4200")
+    cy.contains('Forms').click()
+    cy.contains('Datepicker').click()
+
+    cy.contains('nb-card', 'Common Datepicker').find('input').then(input =>{
+        cy.wrap(input).click({force: true})
+        let dateAssert = selectDayFromCurrent(1)
+
+        cy.wrap(input).invoke('prop', 'value').should('contain',dateAssert)
+    })
+})
+
+
+it.only('Tooltips', () => {
+    cy.visit("http://localhost:4200")
+    cy.contains('Modal & Overlays').click()
+    cy.contains('Tooltip').click()
+    cy.contains('nb-card','Colored Tooltips')
+    cy.get('[icon="menu-2-outline"]').click()
+        cy.contains('Default').click({force: true})
+    cy.get('nb-tooltip').should('contain','This is a tooltip')
+
+
+})
+it.only('Dialog box', () => {
+    cy.visit("http://localhost:4200")
+    cy.contains('Tables & Data').click()
+    cy.contains('Smart Table').click()
+
+    cy.get('[icon="menu-2-outline"]').click()
+    cy.get('tbody tr').first().find('.nb-trash').click()
+    cy.on('window:confirm',(confirm)=>{
+        expect(confirm).to.equal('Are you sure you want to delete?')
+        cy.wrap(confirm).click()
+    })
+})
+it.only('dialog box',()=>{
+    cy.visit("http://localhost:4200")
+    cy.contains('Tables & Data').click()
+    cy.contains('Smart Table').click()
+
+
+    cy.get('[icon="menu-2-outline"]').click()
+    cy.get('tbody tr').first().find('.nb-trash').click()
+    cy.on('window:confirm',(confirm)=> {
+        expect(confirm).to.equal('Are you sure you want to delete?')
+        cy.wrap(confirm).click()
+
+        const stub = cy.stub()
+        cy.on('window:confirm',stub)
+        cy.get('tbody tr').first().find('.nb-trash').click().then(() => {
+            expect((stub.getCall(0))).to.be.calledWith('Are you sure you want to delete?')
+        })
+    })
+    cy.get('tbody tr').first().find('.nb-trash').click()
+     cy.on('window:confirm',(confirm)=> false)
+
+})
+
+
+
+
+
+
 
 it.only('Radio button', () =>{
     cy.visit("http://localhost:4200")
@@ -40,9 +122,9 @@ it.only('Check boxes', () =>{
 it.only('lists and dropdowns', () => {
     cy.visit("http://localhost:4200")
 
-    // cy.get('nav nb-select').click()
-    // cy.get('.options-list').contains('Cosmic').click()
-    // cy.get('nb-layout-header nav').should('have.css', 'background-color', 'rgb(50, 50, 89)')
+    cy.get('nav nb-select').click()
+    cy.get('.options-list').contains('Cosmic').click()
+    cy.get('nb-layout-header nav').should('have.css', 'background-color', 'rgb(50, 50, 89)')
 
     cy.get('nav nb-select').then(dropdown =>{
         cy.wrap(dropdown).click()
