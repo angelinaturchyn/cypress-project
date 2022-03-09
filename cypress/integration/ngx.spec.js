@@ -108,7 +108,7 @@ it.only('Radio button', () =>{
     })
 })
 
-it.only('Check boxes', () =>{
+it('Check boxes', () =>{
     cy.visit("http://localhost:4200")
     cy.contains('Modal & Overlays').click()
     cy.contains('Toastr').click()
@@ -119,7 +119,7 @@ it.only('Check boxes', () =>{
 
 })
 
-it.only('lists and dropdowns', () => {
+it('lists and dropdowns', () => {
     cy.visit("http://localhost:4200")
 
     cy.get('nav nb-select').click()
